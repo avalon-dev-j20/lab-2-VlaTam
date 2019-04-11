@@ -48,6 +48,22 @@ public class Country {
      * TODO(Студент): для класса Country переопределить методы equals и hashCode
      */
 
+    @Override
+    public int hashCode() {
+        return code.hashCode() + name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != getClass())
+            return false;
+        if (obj == this)
+            return true;
+
+        Country other = (Country)obj;
+        return code.equals(other.code) && name.equals(other.name);
+    }
+
     /**
      * Возвращает экземпляр страны созданный из переданного
      * текста в формате 'Код:Название'.
@@ -57,10 +73,24 @@ public class Country {
      * @throws ParseException в случае, если переданная строка
      * имеет неверный формат.
      */
+
     public static Country valueOf(String text) throws ParseException {
         /*
          * TODO(Студент): Реализовать метод valueOf класса Country
          */
-        throw new UnsupportedOperationException("Not implemented yet!");
+
+        //Если в строке более одного разделителя, то кидаем ParseException
+        final Character separator = ':';
+        int amountOfSeparators = text.replaceAll("[^" + separator.toString() + "]+", "").length();
+
+        if (amountOfSeparators > 1) {
+            int errorOffset = text.lastIndexOf(separator);
+            throw new ParseException("There are some separators in the string", errorOffset);
+        }
+
+        String code = text.replaceAll(":.+", "");
+        String name = text.replaceAll("[^:]+:", "");
+
+        return new Country(code, name);
     }
 }
